@@ -1,4 +1,4 @@
-name: Build and Push (Project 1)
+name: Build and Push Docker Image For Project-1
 
 permissions:
   contents: read
@@ -7,7 +7,7 @@ permissions:
 
 on:
   push:
-    branches: [ main, master ]
+    branches: main
     paths:
       - '**/*.py'
       - 'Dockerfile'
