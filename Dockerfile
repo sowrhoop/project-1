@@ -9,13 +9,12 @@ RUN apt-get update \
 # Create non-root user
 RUN useradd -m -u 10001 -s /usr/sbin/nologin appuser
 
-COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
-
-COPY app.py ./
+COPY index.html ./
 
 USER appuser
 ENV PORT=8080
 EXPOSE 8080
 
-CMD ["/bin/sh", "-lc", "uvicorn app:app --host 0.0.0.0 --port ${PORT:-8080}"]
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s CMD curl -fsS "http://127.0.0.1:${PORT:-8080}/" || exit 1
+
+CMD ["/bin/sh", "-lc", "python -m http.server ${PORT:-8080} --directory /app --bind 0.0.0.0"]
