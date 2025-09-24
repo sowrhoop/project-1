@@ -1,11 +1,7 @@
-__pycache__
-*.pyc
-*.pyo
-*.pyd
-.venv
-venv
+node_modules
+npm-debug.log*
+.git
+.gitignore
 dist
 build
 *.log
-.git
-.gitignore
