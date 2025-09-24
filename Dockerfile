@@ -1,20 +1,22 @@
-FROM python:3.11-slim
+FROM node:20-alpine
 
 WORKDIR /app
 
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends curl \
-    && rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache curl
 
-# Create non-root user
-RUN useradd -m -u 10001 -s /usr/sbin/nologin appuser
+RUN addgroup -g 10001 app \
+ && adduser -D -u 10001 -G app appuser
 
-COPY index.html ./
+COPY package.json package-lock.json* ./
+RUN npm ci || npm install --no-audit --no-fund
+
+COPY . .
 
 USER appuser
 ENV PORT=8080
 EXPOSE 8080
 
-HEALTHCHECK --interval=30s --timeout=5s --start-period=10s CMD curl -fsS "http://127.0.0.1:${PORT:-8080}/" || exit 1
+# Healthcheck for consistency with project-1
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s CMD curl -fsS "http://127.0.0.1:${PORT:-8080}/healthz" || exit 1
 
-CMD ["/bin/sh", "-lc", "python -m http.server ${PORT:-8080} --directory /app --bind 0.0.0.0"]
+CMD ["node", "server.js"]
