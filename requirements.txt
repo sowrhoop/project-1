@@ -1,0 +1,9 @@
+opencv-python
+pandas
+pdf2image
+pillow
+ultralytics
+tkintertable
+pyimage
+screeninfo
+openpyxl
